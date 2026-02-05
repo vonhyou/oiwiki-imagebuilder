@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  NAME_PUBLIC: "vonhyou/oiwiki"
+  NAME_PUBLIC: ${{ secrets.NAME_PUBLIC || 'vonhyou/oiwiki' }}
 
 jobs:
   build-and-push:
