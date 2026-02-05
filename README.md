@@ -20,7 +20,7 @@ These changes eliminate HTTP 404 errors and reduce external dependencies. The co
 Pull from Docker Hub:
 
 ```bash
-docker pull vonhyou/oiwiki:latest
+docker pull vonhyou/oiwiki:latest # alternatively: ghcr.io/vonhyou/oiwiki
 docker run -d -p 2333:80 vonhyou/oiwiki:latest
 ```
 
