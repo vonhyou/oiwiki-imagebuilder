@@ -1,5 +1,7 @@
 This repository contains a CI pipeline and a docker file that builds Alpine-based images for [OI Wiki](https://github.com/OI-wiki/OI-wiki).
 
+Mirror uses this image: <https://oi.ray.works>
+
 ## What This Does
 
 The pipeline clones the official OI Wiki repository and builds a static site served by nginx. The build runs weekly on a private Forgejo instance and pushes images to Docker Hub and GitHub Container Registry.
