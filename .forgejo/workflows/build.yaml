@@ -1,0 +1,82 @@
+name: Build and Push OI-wiki Image
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2 AM UTC
+  workflow_dispatch:
+
+env:
+  NAME_PUBLIC: "vonhyou/oiwiki"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Docker CLI
+        run: |
+          curl -L https://download.docker.com/linux/static/stable/x86_64/docker-27.3.1.tgz | tar -xz
+          mv docker/docker /usr/local/bin/
+          rm -rf docker
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.GH_TOKEN }}
+
+      - name: Generate Tags
+        id: meta
+        run: |
+          DATE_TAG=$(date +'%Y%m%d')
+          
+          DOCKER_BASE="docker.io/${{ env.NAME_PUBLIC }}"
+          GHCR_BASE="ghcr.io/${{ env.NAME_PUBLIC }}"
+
+          DOCKER_BASE=$(echo "$DOCKER_BASE" | tr '[:upper:]' '[:lower:]')
+          GHCR_BASE=$(echo "$GHCR_BASE" | tr '[:upper:]' '[:lower:]')
+
+          TAGS="${DOCKER_BASE}:latest,"
+          TAGS="${TAGS}${DOCKER_BASE}:${DATE_TAG},"
+          TAGS="${TAGS}${GHCR_BASE}:latest,"
+          TAGS="${TAGS}${GHCR_BASE}:${DATE_TAG}"
+
+          echo "Generated Tags: $TAGS"
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          pull: ${{ github.event_name == 'schedule' }}
+          no-cache: ${{ github.event_name == 'schedule' }}
+
+      - name: Image Summary
+        run: |
+          DATE_TAG=$(date +'%Y%m%d')
+          echo "### Docker Images Built" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Docker Hub" >> $GITHUB_STEP_SUMMARY
+          echo "- \`docker pull ${{ env.NAME_PUBLIC }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`docker pull ${{ env.NAME_PUBLIC }}:${DATE_TAG}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### GitHub Container Registry" >> $GITHUB_STEP_SUMMARY
+          echo "- \`docker pull ghcr.io/${{ env.NAME_PUBLIC }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`docker pull ghcr.io/${{ env.NAME_PUBLIC }}:${DATE_TAG}\`" >> $GITHUB_STEP_SUMMARY
