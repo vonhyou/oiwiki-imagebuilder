@@ -1,0 +1,8 @@
+---
+services:
+  oiwiki:
+    image: vonhyou/oiwiki:latest # or ghcr.io/vonhyou/oiwiki:latest
+    container_name: oiwiki
+    ports:
+      - "2333:80" # change to your desired port
+    restart: unless-stopped

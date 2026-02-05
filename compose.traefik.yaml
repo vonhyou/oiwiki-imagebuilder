@@ -1,0 +1,15 @@
+---
+services:
+  oiwiki:
+    image: vonhyou/oiwiki:latest # ghcr.io/vonhyou/oiwiki:latest
+    container_name: oiwiki
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.oiwiki.rule=Host(`oiwiki.example.com`) # modify this
+      - traefik.http.routers.oiwiki.entrypoints=websecure
+      - traefik.http.routers.oiwiki.tls=true
+      - traefik.http.routers.oiwiki.tls.certresolver=cloudflare # or other services you use
+      - traefik.http.routers.oiwiki.service=oiwiki
+      - traefik.http.services.oiwiki.loadBalancer.server.port=80
+    restart: unless-stopped
+

@@ -20,7 +20,7 @@ These changes eliminate HTTP 404 errors and reduce external dependencies. The co
 Pull from Docker Hub:
 
 ```bash
-docker pull vonhyou/oiwiki:latest # alternatively: ghcr.io/vonhyou/oiwiki
+docker pull vonhyou/oiwiki:latest # alternatively: ghcr.io/vonhyou/oiwiki:latest
 docker run -d -p 2333:80 vonhyou/oiwiki:latest
 ```
 
@@ -28,7 +28,7 @@ Access the site at http://localhost:2333
 
 ### Using Docker Compose
 
-Create a `compose.yaml` file:
+Create a [`compose.yaml`](./compose.yaml) file:
 
 ```yaml
 ---
@@ -40,6 +40,8 @@ services:
       - "2333:80"
     restart: unless-stopped
 ```
+
+> Note: if you use traefik as your reverse proxy, please refer to [compose.traefik.yaml](./compose.traefik.yaml)
 
 Run the service:
 
