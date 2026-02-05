@@ -74,20 +74,20 @@ git commit -m "Switch to GitHub Actions"
 git push
 ```
 
-1. Add a new repository variable
+**Add a new repository variable**
   - Name: `NAME_PUBLIC`
   - Value: `your-dockerhub-username/your-image-name`
 
   Example: `vonhyou/oiwiki`
 
-2. Configure these secrets in your GitHub repository settings:
+**Configure these secrets in your GitHub repository settings:**
 
   - `DOCKERHUB_USERNAME` - Docker Hub username
   - `DOCKERHUB_TOKEN` - Docker Hub access token
   - `GH_USERNAME` - GitHub username
   - `GH_TOKEN` - GitHub personal access token with write:packages permission
 
-3. If you only want to push to one registry, you can remove the unused login and modify the tag generation accordingly. And for Github action, it's safe to remove the `Install Docker CLI` part in the pipeline. 
+If you only want to push to one registry, you can remove the unused login and modify the tag generation accordingly. And for Github action, it's safe to remove the `Install Docker CLI` part in the pipeline. 
 
 The workflow will run automatically on the same schedule.
 
